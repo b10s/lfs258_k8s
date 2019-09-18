@@ -1,0 +1,29 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+$configureWorkerNodeBox = <<-SCRIPT
+  #LFS258
+  apt-get update
+  apt-get upgrade -y
+  apt-get install -y docker.io
+
+  add-apt-repository 'deb http://apt.kubernetes.io/ kubernetes-xenial main'
+  curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+  apt-get update
+  apt-get install -y kubeadm kubelet kubectl
+
+  swapoff -a
+  sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+  #WARNING: the IP of master is hardcoded
+  #see master node Vagrantfile
+  echo "10.0.0.10 k8smaster" >> /etc/hosts
+SCRIPT
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/xenial64"
+  config.vm.hostname = "worker-node"
+  config.vm.network :private_network, ip: "10.0.0.11"
+
+  config.vm.provision "shell", inline: $configureWorkerNodeBox
+end
