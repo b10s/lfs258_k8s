@@ -10,7 +10,7 @@ $configureMasterNodeBox = <<-SCRIPT
   add-apt-repository 'deb http://apt.kubernetes.io/ kubernetes-xenial main'
   curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
   apt-get update
-  apt-get install -y kubeadm kubelet kubectl
+  apt-get install -y kubeadm=1.15.1-00 kubelet=1.15.1-00 kubectl=1.15.1-00
 
   IP_ADDR=`ifconfig enp0s8 | grep Mask | awk '{print $2}'| cut -f2 -d:`
   echo "$IP_ADDR k8smaster" >> /etc/hosts
@@ -35,9 +35,11 @@ $kubectl = <<-SCRIPT
   #install calico
   wget https://tinyurl.com/yb4xturm -O rbac-kdd.yaml
   kubectl apply -f rbac-kdd.yaml
-
   wget https://tinyurl.com/y8lvqc9g -O calico.yaml
   kubectl apply -f calico.yaml
+
+  # allow to deploy on master
+  kubectl taint nodes --all node-role.kubernetes.io/master-
 SCRIPT
 
 Vagrant.configure("2") do |config|
