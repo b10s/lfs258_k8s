@@ -13,6 +13,8 @@ vagrant ssh -c "sudo $JOIN_MASTER_NODE_CMD"
 popd
 ```
 
+or just `./setup.sh`
+
 ## WARNING: you can not exec into pod unless do the following fix
 
 add the following line into /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
